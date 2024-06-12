@@ -77,7 +77,9 @@ const mongoose = require("mongoose"),
  * passport-local-mongoose 플러그인을 사용자 스키마에 추가
  */
 // 이메일 주소를 사용자 이름으로 사용
-
+userSchema.plugin(passportLocalMongoose, {
+  usernameField: "email"
+});
 /**
  * Listing 18.2 (p. 260)
  * 사용자 모델에 가상 속성 추가
@@ -97,12 +99,6 @@ userSchema.virtual("fullName").get(function () {
  * 메소드를 통해 생성 또는 업데이트 후에 실행된다.
  */
 userSchema.pre("save", function (next) {
-  let user = this; // 콜백에서 함수 키워드 사용
-
-  /**
-   * Listing 19.4 (p. 281)
-   * user.js에 pre("save") 훅 추가
-   */
   if (user.subscribedAccount === undefined) {
     // 기존 Subscriber 연결을 위한 조건 체크 추가
     Subscriber.findOne({
